@@ -1,7 +1,6 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait, Select
-from selenium.webdriver.support import expected_conditions as ec
-import time
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class DashboardPage:
@@ -10,187 +9,144 @@ class DashboardPage:
 
         self.driver = driver
 
-        # Logout
-        self.logout_button = (
+        # Dashboard Menu
+        self.dashboard_menu = (
             By.XPATH,
-            '//*[@id="root"]/div/div[1]/nav/a[7]/span'
+            "//a[contains(@href,'dashboard')]"
         )
 
         # Attendance View All
-        self.view_all_attendance = (
-            By.XPATH,
-            '//*[@id="root"]/div/div[2]/div/div/div[2]/section/div[1]/button'
+        self.attendance_view_all = (
+            By.CSS_SELECTOR,
+            "button.view-all-button"
         )
 
-        # Employee Filter
-        self.employee_filter = (
+        # Project View All
+        self.project_view_all = (
             By.XPATH,
-            '//*[@id="root"]/div/div[2]/div/div/div[2]/div[1]/div[1]/div[1]/button/span'
+            "//*[@id='root']/div/div[2]/div/div/div/div[2]/div/section[2]/div/button"
         )
 
-        # Employee Checkbox
-        self.employee_checkbox = (
+        # Compose Message
+        self.compose_message = (
             By.XPATH,
-            '//*[@id="root"]/div/div[2]/div/div/div[3]/div/div[3]/button[1]/span[3]/span[1]'
+            "//*[@id='root']/div/div[2]/div/div/div/div[2]/div/section[3]/button"
         )
 
-        # Add Button
-        self.add_button = (
+        self.logout_button = (
             By.XPATH,
-            '//*[@id="root"]/div/div[2]/div/div/div[3]/div/button'
+            '//*[@id="root"]/div/div[1]/nav/a[7]'
         )
 
-        # Status Dropdown
-        self.status_dropdown = (
-            By.XPATH,
-            '//*[@id="root"]/div/div[2]/div/div/div[2]/div[1]/div[1]/div[1]/select'
+    # ----------------------------------------------------
+    # Open Dashboard
+    # ----------------------------------------------------
+
+    def open_dashboard(self):
+
+        dashboard = WebDriverWait(self.driver,20).until(
+            EC.element_to_be_clickable(self.dashboard_menu)
         )
 
-        # From Date
-        self.from_date = (
-            By.XPATH,
-            '//*[@id="root"]/div/div[2]/div/div/div[2]/div[1]/div[1]/div[2]/div[1]/input'
+        self.driver.execute_script(
+            "arguments[0].click();",
+            dashboard
         )
 
-        # To Date
-        self.to_date = (
-            By.XPATH,
-            '//*[@id="root"]/div/div[2]/div/div/div[2]/div[1]/div[1]/div[2]/div[2]/input'
-        )
-
-        # Apply Filter
-        self.apply_filter = (
-            By.XPATH,
-            '//*[@id="root"]/div/div[2]/div/div/div[2]/div[1]/div[1]/div[2]/div[3]/button[1]'
-        )
-
-        # Clear Filter
-        self.clear_filter = (
-            By.XPATH,
-            '//*[@id="root"]/div/div[2]/div/div/div[2]/div[1]/div[1]/div[2]/div[3]/button[2]'
-        )
-
-    def is_dashboard_displayed(self):
-
-        WebDriverWait(self.driver, 20).until(
+        WebDriverWait(self.driver,20).until(
             lambda d: "dashboard" in d.current_url
         )
 
-        return "dashboard" in self.driver.current_url
+    # ----------------------------------------------------
+    # Attendance View All
+    # ----------------------------------------------------
 
     def open_attendance_page(self):
 
-        attendance = WebDriverWait(self.driver, 20).until(
-            ec.element_to_be_clickable(
-                self.view_all_attendance
+        button = WebDriverWait(self.driver,20).until(
+            EC.presence_of_element_located(
+                self.attendance_view_all
+            )
+        )
+
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block:'center'});",
+            button
+        )
+
+        WebDriverWait(self.driver,10).until(
+            EC.element_to_be_clickable(
+                self.attendance_view_all
             )
         )
 
         self.driver.execute_script(
             "arguments[0].click();",
-            attendance
+            button
         )
 
-        time.sleep(3)
+    # ----------------------------------------------------
+    # Project View All
+    # ----------------------------------------------------
 
-    def select_employee_filter(self):
+    def open_project_page(self):
 
-        employee = WebDriverWait(self.driver, 20).until(
-            ec.element_to_be_clickable(
-                self.employee_filter
+        button = WebDriverWait(self.driver,20).until(
+            EC.presence_of_element_located(
+                self.project_view_all
             )
         )
 
-        employee.click()
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block:'center'});",
+            button
+        )
 
-        time.sleep(2)
+        self.driver.execute_script(
+            "arguments[0].click();",
+            button
+        )
 
-        checkbox = WebDriverWait(self.driver, 20).until(
-            ec.element_to_be_clickable(
-                self.employee_checkbox
+    # ----------------------------------------------------
+    # Compose Message
+    # ----------------------------------------------------
+
+    def open_compose_message(self):
+
+        button = WebDriverWait(self.driver,20).until(
+            EC.presence_of_element_located(
+                self.compose_message
             )
         )
 
-        checkbox.click()
-
-        time.sleep(1)
-
-        add = WebDriverWait(self.driver, 20).until(
-            ec.element_to_be_clickable(
-                self.add_button
-            )
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block:'center'});",
+            button
         )
 
-        add.click()
-
-        time.sleep(2)
-
-    def select_status(self, status):
-
-        dropdown = Select(
-            WebDriverWait(self.driver, 20).until(
-                ec.presence_of_element_located(
-                    self.status_dropdown
-                )
-            )
+        self.driver.execute_script(
+            "arguments[0].click();",
+            button
         )
 
-        dropdown.select_by_visible_text(status)
 
-        time.sleep(2)
-
-    def enter_dates(self, from_date, to_date):
-
-        from_field = WebDriverWait(self.driver, 20).until(
-            ec.element_to_be_clickable(
-                self.from_date
-            )
+    def is_dashboard_displayed(self):
+        WebDriverWait(self.driver, 20).until(
+            EC.url_contains("dashboard")
         )
 
-        from_field.clear()
-        from_field.send_keys(from_date)
-
-        to_field = WebDriverWait(self.driver, 20).until(
-            ec.element_to_be_clickable(
-                self.to_date
-            )
-        )
-
-        to_field.clear()
-        to_field.send_keys(to_date)
-
-        time.sleep(2)
-
-    def click_apply_filter(self):
-
-        apply_btn = WebDriverWait(self.driver, 20).until(
-            ec.element_to_be_clickable(
-                self.apply_filter
-            )
-        )
-
-        apply_btn.click()
-
-        time.sleep(3)
-
-    def click_clear_filter(self):
-
-        clear_btn = WebDriverWait(self.driver, 20).until(
-            ec.element_to_be_clickable(
-                self.clear_filter
-            )
-        )
-
-        clear_btn.click()
-
-        time.sleep(2)
+        return "dashboard" in self.driver.current_url.lower()
 
     def click_logout(self):
-
         logout = WebDriverWait(self.driver, 20).until(
-            ec.element_to_be_clickable(
+            EC.element_to_be_clickable(
                 self.logout_button
             )
+        )
+
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block:'center'});",
+            logout
         )
 
         self.driver.execute_script(
@@ -199,5 +155,7 @@ class DashboardPage:
         )
 
         WebDriverWait(self.driver, 20).until(
-            lambda d: "login" in d.current_url
+            EC.url_contains("login")
         )
+
+        print("Logout Successful")
